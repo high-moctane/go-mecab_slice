@@ -1,47 +1,87 @@
 package mecabs
 
 import (
-	"testing"
-
 	"reflect"
+	"testing"
 )
 
-func TestNewMeCabS(t *testing.T) {
-	mecabs, err := New(map[string]string{"output-format-type": "wakati", "all-morphs": ""})
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-		return
+func TestConst(t *testing.T) {
+	if BOM.MorphemeString() != BOMS {
+		t.Errorf("different in BOM and BOMS")
 	}
-	defer mecabs.Destroy()
+	if EOM.MorphemeString() != EOMS {
+		t.Errorf("different in EOM and EOMS")
+	}
 }
 
-func TestParse(t *testing.T) {
-	mecabs, err := New(map[string]string{})
+func TestNew(t *testing.T) {
+	m, err := New(map[string]string{})
 	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-		return
+		t.Fatalf("unexpected error")
 	}
-	defer mecabs.Destroy()
+	defer m.Destroy()
+}
 
-	result, err := mecabs.Parse("こんにちは世界")
+func TestNewPhraseString(t *testing.T) {
+	m, err := New(map[string]string{})
 	if err != nil {
-		t.Errorf("parse error: %v", err)
-		return
+		t.Fatalf("unexpected error")
 	}
-	expected := [][10]string{
+	defer m.Destroy()
+
+	var ps PhraseString
+	var e PhraseString
+
+	ps, err = m.NewPhraseString("")
+	if err != nil {
+		t.Fatalf("unexpected error")
+	}
+	e = PhraseString{}
+	if !reflect.DeepEqual(ps, e) {
+		t.Errorf("expected\n%v\nbut\n%v", e, ps)
+	}
+
+	ps, err = m.NewPhraseString("こんにちは世界")
+	if err != nil {
+		t.Fatalf("unexpected error")
+	}
+	e = PhraseString{
+		"こんにちは\t感動詞,,,,,,こんにちは,コンニチハ,コンニチワ",
+		"世界\t名詞,一般,,,,,世界,セカイ,セカイ",
+	}
+	if !reflect.DeepEqual(ps, e) {
+		t.Errorf("expected\n%v\nbut\n%v", e, ps)
+	}
+}
+
+func TestNewPhrase(t *testing.T) {
+	m, err := New(map[string]string{})
+	if err != nil {
+		t.Fatalf("unexpected error")
+	}
+	defer m.Destroy()
+
+	var p Phrase
+	var e Phrase
+
+	p, err = m.NewPhrase("")
+	if err != nil {
+		t.Fatalf("unexpected error")
+	}
+	e = Phrase{}
+	if !reflect.DeepEqual(p, e) {
+		t.Errorf("expected\n%v\nbut\n%v", e, p)
+	}
+
+	p, err = m.NewPhrase("こんにちは世界")
+	if err != nil {
+		t.Fatalf("unexpected error")
+	}
+	e = Phrase{
 		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
 		{"世界", "名詞", "一般", "", "", "", "", "世界", "セカイ", "セカイ"},
 	}
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("want %v, but %v", expected, result)
-	}
-}
-
-func BenchmarkParse(b *testing.B) {
-	mecabs, _ := New(map[string]string{})
-	defer mecabs.Destroy()
-
-	for i := 0; i < b.N; i++ {
-		mecabs.Parse("ある日の暮方の事である。一人の下人げにんが、羅生門らしょうもんの下で雨やみを待っていた。　広い門の下には、この男のほかに誰もいない。ただ、所々丹塗にぬりの剥はげた、大きな円柱まるばしらに、蟋蟀きりぎりすが一匹とまっている。羅生門が、朱雀大路すざくおおじにある以上は、この男のほかにも、雨やみをする市女笠いちめがさや揉烏帽子もみえぼしが、もう二三人はありそうなものである。それが、この男のほかには誰もいない。")
+	if !reflect.DeepEqual(p, e) {
+		t.Errorf("expected\n%v\nbut\n%v", e, p)
 	}
 }

@@ -56,3 +56,94 @@ func TestPhraseStringPhrase(t *testing.T) {
 		t.Errorf("expected\n%v\nbut\n%v", e, ans)
 	}
 }
+
+func TestOriginalForm(t *testing.T) {
+	var p Phrase
+	var e string
+	var ans string
+
+	p = Phrase{}
+	e = ""
+	ans = p.OriginalForm()
+	if ans != e {
+		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	}
+
+	p = Phrase{
+		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
+		{"世界", "名詞", "一般", "", "", "", "", "世界", "セカイ", "セカイ"},
+	}
+	e = "こんにちは世界"
+	ans = p.OriginalForm()
+	if ans != e {
+		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	}
+}
+
+func TestReading(t *testing.T) {
+	var p Phrase
+	var e string
+	var ans string
+	var ok bool
+
+	p = Phrase{}
+	e = ""
+	ans, ok = p.Reading()
+	if ans != e && !ok {
+		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	}
+
+	p = Phrase{
+		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
+		{"世界", "名詞", "一般", "", "", "", "", "世界", "セカイ", "セカイ"},
+	}
+	e = "コンニチハセカイ"
+	ans, ok = p.Reading()
+	if ans != e && !ok {
+		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	}
+
+	p = Phrase{
+		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
+		{"世界", "名詞", "一般", "", "", "", "", "世界", "", ""},
+	}
+	e = "コンニチハ"
+	ans, ok = p.Reading()
+	if ans != e && ok {
+		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	}
+}
+
+func TestPronounciation(t *testing.T) {
+	var p Phrase
+	var e string
+	var ans string
+	var ok bool
+
+	p = Phrase{}
+	e = ""
+	ans, ok = p.Pronounciation()
+	if ans != e && !ok {
+		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	}
+
+	p = Phrase{
+		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
+		{"世界", "名詞", "一般", "", "", "", "", "世界", "セカイ", "セカイ"},
+	}
+	e = "コンニチワセカイ"
+	ans, ok = p.Pronounciation()
+	if ans != e && !ok {
+		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	}
+
+	p = Phrase{
+		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
+		{"世界", "名詞", "一般", "", "", "", "", "世界", "", ""},
+	}
+	e = "コンニチワ"
+	ans, ok = p.Pronounciation()
+	if ans != e && ok {
+		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	}
+}

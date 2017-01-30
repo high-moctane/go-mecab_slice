@@ -30,7 +30,10 @@ func MakeMorphemeString(s string) MorphemeString {
 
 func (m MorphemeString) Morpheme() Morpheme {
 	tab := strings.Split(string(m), "\t")
-	prop := strings.Split(tab[1], ",")
+	prop := make([]string, 9)
+	for i, s := range strings.Split(tab[1], ",") {
+		prop[i] = s
+	}
 	return Morpheme{
 		OriginalForm:         tab[0],
 		PartOfSpeech:         prop[0],

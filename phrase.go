@@ -1,52 +1,40 @@
 package mecabs
 
-type PhraseString []MorphemeString
-
+// Phrase は文を Morpheme の列で保存したものです。
 type Phrase []Morpheme
 
-func (p PhraseString) Phrase() Phrase {
-	ans := make(Phrase, len(p))
-	for i, v := range p {
-		ans[i] = v.Morpheme()
-	}
-	return ans
-}
-
-func (p Phrase) PhraseString() PhraseString {
-	ans := make(PhraseString, len(p))
-	for i, v := range p {
-		ans[i] = v.MorphemeString()
-	}
-	return ans
-}
-
-func (p Phrase) OriginalForm() (ans string) {
-	for _, v := range p {
-		ans += v.OriginalForm
+// Surface は Morpheme 列の表層形をつなげたものです。
+func (ph Phrase) Surface() (ans string) {
+	for _, m := range ph {
+		ans += m.Surface()
 	}
 	return
 }
 
-func (p Phrase) Reading() (string, bool) {
-	var ans string
-	ok := true
-	for _, v := range p {
-		if v.Reading == "" {
+// Reading は Morpheme 列の読みをつなげたものです。
+// Reading が空文字列の Morpheme が存在する場合は
+// ok が false になります。
+func (ph Phrase) Reading() (ans string, ok bool) {
+	ok = true
+	for _, m := range ph {
+		ans += m.Reading()
+		if m.Reading() == "" {
 			ok = false
 		}
-		ans += v.Reading
 	}
-	return ans, ok
+	return
 }
 
-func (p Phrase) Pronounciation() (string, bool) {
-	var ans string
-	ok := true
-	for _, v := range p {
-		if v.Pronounciation == "" {
+// Pronounciation は Morpheme 列の発音をつなげたものです。
+// Pronounciation が空文字列の Morpheme が存在する場合は
+// ok が false になります。
+func (ph Phrase) Pronounciation() (ans string, ok bool) {
+	ok = true
+	for _, m := range ph {
+		ans += m.Pronounciation()
+		if m.Pronounciation() == "" {
 			ok = false
 		}
-		ans = v.Pronounciation
 	}
-	return ans, ok
+	return
 }

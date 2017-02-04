@@ -1,149 +1,66 @@
 package mecabs
 
-import (
-	"reflect"
-	"testing"
-)
+import "testing"
 
-func TestPhrasePhrase(t *testing.T) {
-	var ps PhraseString
-	var e Phrase
-	var ans Phrase
-
-	ps = PhraseString{}
-	e = Phrase{}
-	ans = ps.Phrase()
-	if !reflect.DeepEqual(ans, e) {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+func TestPhraseSurface(t *testing.T) {
+	ph := Phrase{
+		{"あ", "", "", "", "", "", "", "", "", ""},
+		{"い", "", "", "", "", "", "", "", "", ""},
+		{"う", "", "", "", "", "", "", "", "", ""},
+		{"え", "", "", "", "", "", "", "", "", ""},
+		{"お", "", "", "", "", "", "", "", "", ""},
 	}
-
-	ps = PhraseString{
-		"こんにちは\t感動詞,,,,,,こんにちは,コンニチハ,コンニチワ",
-		"世界\t名詞,一般,,,,,世界,セカイ,セカイ",
-	}
-	e = Phrase{
-		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
-		{"世界", "名詞", "一般", "", "", "", "", "世界", "セカイ", "セカイ"},
-	}
-	ans = ps.Phrase()
-	if !reflect.DeepEqual(ans, e) {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	if ph.Surface() != "あいうえお" {
+		t.Errorf("expected あいうえお, but %v\n", ph.Surface())
 	}
 }
 
-func TestPhraseStringPhrase(t *testing.T) {
-	var p Phrase
-	var e PhraseString
-	var ans PhraseString
-
-	p = Phrase{}
-	e = PhraseString{}
-	ans = p.PhraseString()
-	if !reflect.DeepEqual(ans, e) {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+func TestPhraseReading(t *testing.T) {
+	ph := Phrase{
+		{"", "", "", "", "", "", "", "", "あ", ""},
+		{"", "", "", "", "", "", "", "", "い", ""},
+		{"", "", "", "", "", "", "", "", "う", ""},
+		{"", "", "", "", "", "", "", "", "え", ""},
+		{"", "", "", "", "", "", "", "", "お", ""},
 	}
-
-	p = Phrase{
-		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
-		{"世界", "名詞", "一般", "", "", "", "", "世界", "セカイ", "セカイ"},
+	r, ok := ph.Reading()
+	if !ok || r != "あいうえお" {
+		t.Errorf("expected あいうえお, but %v\n", r)
 	}
-	e = PhraseString{
-		"こんにちは\t感動詞,,,,,,こんにちは,コンニチハ,コンニチワ",
-		"世界\t名詞,一般,,,,,世界,セカイ,セカイ",
+	ph = Phrase{
+		{"", "", "", "", "", "", "", "", "あ", ""},
+		{"", "", "", "", "", "", "", "", "い", ""},
+		{"", "", "", "", "", "", "", "", "う", ""},
+		{"", "", "", "", "", "", "", "", "え", ""},
+		{"", "", "", "", "", "", "", "", "", ""},
 	}
-	ans = p.PhraseString()
-	if !reflect.DeepEqual(ans, e) {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
-	}
-}
-
-func TestOriginalForm(t *testing.T) {
-	var p Phrase
-	var e string
-	var ans string
-
-	p = Phrase{}
-	e = ""
-	ans = p.OriginalForm()
-	if ans != e {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
-	}
-
-	p = Phrase{
-		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
-		{"世界", "名詞", "一般", "", "", "", "", "世界", "セカイ", "セカイ"},
-	}
-	e = "こんにちは世界"
-	ans = p.OriginalForm()
-	if ans != e {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	r, ok = ph.Reading()
+	if ok || r != "あいうえ" {
+		t.Errorf("expected あいうえ, but %v\n", r)
 	}
 }
 
-func TestReading(t *testing.T) {
-	var p Phrase
-	var e string
-	var ans string
-	var ok bool
-
-	p = Phrase{}
-	e = ""
-	ans, ok = p.Reading()
-	if ans != e && !ok {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+func TestPhrasePronounciation(t *testing.T) {
+	ph := Phrase{
+		{"", "", "", "", "", "", "", "", "", "あ"},
+		{"", "", "", "", "", "", "", "", "", "い"},
+		{"", "", "", "", "", "", "", "", "", "う"},
+		{"", "", "", "", "", "", "", "", "", "え"},
+		{"", "", "", "", "", "", "", "", "", "お"},
 	}
-
-	p = Phrase{
-		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
-		{"世界", "名詞", "一般", "", "", "", "", "世界", "セカイ", "セカイ"},
+	p, ok := ph.Pronounciation()
+	if !ok || p != "あいうえお" {
+		t.Errorf("expected あいうえお, but %v\n", p)
 	}
-	e = "コンニチハセカイ"
-	ans, ok = p.Reading()
-	if ans != e && !ok {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	ph = Phrase{
+		{"", "", "", "", "", "", "", "", "", "あ"},
+		{"", "", "", "", "", "", "", "", "", "い"},
+		{"", "", "", "", "", "", "", "", "", "う"},
+		{"", "", "", "", "", "", "", "", "", "え"},
+		{"", "", "", "", "", "", "", "", "", ""},
 	}
-
-	p = Phrase{
-		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
-		{"世界", "名詞", "一般", "", "", "", "", "世界", "", ""},
-	}
-	e = "コンニチハ"
-	ans, ok = p.Reading()
-	if ans != e && ok {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
-	}
-}
-
-func TestPronounciation(t *testing.T) {
-	var p Phrase
-	var e string
-	var ans string
-	var ok bool
-
-	p = Phrase{}
-	e = ""
-	ans, ok = p.Pronounciation()
-	if ans != e && !ok {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
-	}
-
-	p = Phrase{
-		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
-		{"世界", "名詞", "一般", "", "", "", "", "世界", "セカイ", "セカイ"},
-	}
-	e = "コンニチワセカイ"
-	ans, ok = p.Pronounciation()
-	if ans != e && !ok {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
-	}
-
-	p = Phrase{
-		{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"},
-		{"世界", "名詞", "一般", "", "", "", "", "世界", "", ""},
-	}
-	e = "コンニチワ"
-	ans, ok = p.Pronounciation()
-	if ans != e && ok {
-		t.Errorf("expected\n%v\nbut\n%v", e, ans)
+	p, ok = ph.Pronounciation()
+	if ok || p != "あいうえ" {
+		t.Errorf("expected あいうえ, but %v\n", p)
 	}
 }

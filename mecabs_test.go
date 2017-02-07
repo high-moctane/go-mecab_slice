@@ -31,6 +31,12 @@ func TestParseToPhrase(t *testing.T) {
 	if !reflect.DeepEqual(expected, ph) {
 		t.Errorf("expected %v, but %v\n", pp.Sprint(expected), pp.Sprint(ph))
 	}
+
+	expected = Phrase{}
+	ph, err = mecabs.ParseToPhrase("")
+	if !reflect.DeepEqual(expected, ph) {
+		t.Errorf("expected %v, but %v\n", pp.Sprint(expected), pp.Sprint(ph))
+	}
 }
 
 func BenchmarkParseToPhrase(b *testing.B) {

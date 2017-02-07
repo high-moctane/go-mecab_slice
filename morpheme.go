@@ -1,7 +1,14 @@
 package mecabs
 
+import "strings"
+
 // 各形態素に含まれる情報の長さです。
 const MorPropLen = 10
+
+var (
+	BOS = Morpheme{"", "BOS", "", "", "", "", "", "", "", ""}
+	EOS = Morpheme{"", "EOS", "", "", "", "", "", "", "", ""}
+)
 
 // 形態素情報を記録した配列です。
 type Morpheme [MorPropLen]string
@@ -54,4 +61,9 @@ func (m *Morpheme) Reading() string {
 // 形態素の発音です。
 func (m *Morpheme) Pronounciation() string {
 	return m[9]
+}
+
+// MeCab のフォーマットどおりに出力します
+func (m *Morpheme) String() string {
+	return m[0] + "\t" + strings.Join(m[1:], ",")
 }
